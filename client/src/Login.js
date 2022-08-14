@@ -1,5 +1,4 @@
 import React from "react"
-import { Container } from "react-bootstrap"
 
 const params = new URLSearchParams({
   client_id: '0ab62b72024b4e79b14900920249deea',

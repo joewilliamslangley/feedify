@@ -2,6 +2,8 @@ import React, { useState, useEffect, } from 'react'
 import useAuth from './useAuth'
 import SpotifyWebApi from 'spotify-web-api-node'
 import TrackList from './TrackList'
+import BrandBar from './BrandBar'
+import AudioPlayer from './AudioPlayer'
 
 const spotifyApi = new SpotifyWebApi({
   clientID: "0ab62b72024b4e79b14900920249deea"
@@ -13,47 +15,81 @@ export default function Dashboard({code}) {
   const [followedAlbums, setFollowedAlbums] = useState([])
   const [followedTracks, setFollowedTracks] = useState([])
 
-  useEffect(() => {
-    if(!accessToken) return
-    spotifyApi.setAccessToken(accessToken)
-
+  const getArtists = () => {
     spotifyApi.getFollowedArtists()
     .then(data => {
       const artists = data.body.artists.items.map(data => data.id)
       setFollowedArtists(artists)
       return artists
     })
+  }
+
+  const getAlbums = (artist) => {
+    return spotifyApi.getArtistAlbums(artist)
+    .then(data => {
+      let albums = []
+      data.body.items.forEach(album => {
+        albums.push({
+          id: album.id,
+          artist_id: artist,
+          name: album.name,
+          url: album.external_urls.spotify,
+          artist: album.artists[0].name,
+          release_date: album.release_date,
+          total_tracks: album.total_tracks,
+          album_art_url: album.images[0].url
+        })
+      })
+      return albums
+    })
+  }
+
+  const getTracks = (album) => {
+    return spotifyApi.getAlbumTracks(album.id)
+    .then(data => {
+      let tracks = []
+      data.body.items.forEach(track => {
+        if (track.artists.map(x => x.id).includes(album.artist_id)) {
+        tracks.push({
+          title: track.name,
+          artist: track.artists.map(x => x.name).join(', '),
+          album_name: album.name,
+          album_release_date: album.release_date,
+          id: track.id,
+          album_art_url: album.album_art_url,
+          audioSrc: track.preview_url
+        })
+        }
+      })
+      return tracks
+    })
+  }
+
+  const resolvePromiseArray = (promiseArray) => {
+    return Promise.all(promiseArray)
+    .then(values => {
+      let resolvedArray = []
+      values.forEach(item => {
+        resolvedArray.push(...item)
+      })
+      return resolvedArray
+    })
+  }
+
+  useEffect(() => {
+    if(!accessToken) return
+    spotifyApi.setAccessToken(accessToken)
+    getArtists()
   }, [accessToken])
 
   useEffect(() => {
     let albumCalls = []
     followedArtists.forEach(artist => {
       albumCalls.push(
-        spotifyApi.getArtistAlbums(artist)
-        .then(data => {
-          let albums = []
-          data.body.items.forEach(album => {
-            albums.push({
-              id: album.id,
-              name: album.name,
-              url: album.external_urls.spotify,
-              artist: album.artists[0].name,
-              release_date: album.release_date,
-              total_tracks: album.total_tracks
-            })
-          })
-          return albums
-        })
+        getAlbums(artist)
       )
     })
-    Promise.all(albumCalls)
-    .then(values => {
-      let albums = []
-      values.forEach(array => {
-        albums.push(...array)
-      })
-      return albums
-    })
+    resolvePromiseArray(albumCalls)
     .then(albums => {
       albums = albums.filter((album, index, self) => index === self.findIndex((t) => t.id === album.id))
       const filteredAlbums = albums.filter(album => album.artist !== 'Various Artists')
@@ -67,41 +103,24 @@ export default function Dashboard({code}) {
     let n = 0
     for (const album of followedAlbums) {
       tracksCalls.push(
-        spotifyApi.getAlbumTracks(album.id)
-        .then(data => {
-          let tracks = []
-          data.body.items.forEach(track => {
-            console.log(track)
-            tracks.push({
-              name: track.name,
-              artist: track.artists[0].name,
-              album_name: album.name,
-              album_release_date: album.release_date,
-              id: track.id,
-              url: album.url
-            })
-          })
-          return tracks
-        })
+        getTracks(album)
       )
       n += album.total_tracks
-      console.log(n)
       if (n > 99) {
         break
       }
     }
-    Promise.all(tracksCalls).then(values => {
-      let tracks = []
-      values.forEach(array => {
-        tracks.push(...array)
-      })
+    resolvePromiseArray(tracksCalls).then(tracks => {
       setFollowedTracks(tracks)
+      console.log(tracks[0])
     })
   }, [followedAlbums])
 
   return (
-    <div className='dashboard'>
+    <div className='app'>
+      <BrandBar />
       <TrackList tracks={followedTracks} />
+      <AudioPlayer tracks={followedTracks}/>
     </div>
   )
 }

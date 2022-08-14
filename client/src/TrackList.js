@@ -1,12 +1,16 @@
 import React from 'react'
+import Container from 'react-bootstrap/esm/Container'
+import Track from './Track'
 
 export default function TrackList(props) {
-  console.log('hello')
   return (
-    <div className="trackList">
-      {props.tracks.map(track => {
-        return <p>{track.name} - {track.artist} - {track.url}</p>
-      })}
-    </div>
+    <Container>
+      <div className="trackList">
+        {props.tracks.map(track => {
+          return <Track track={track} />
+        })}
+      </div>
+    </Container>
+
   )
 }
