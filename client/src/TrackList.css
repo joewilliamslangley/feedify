@@ -1,0 +1,12 @@
+.tracklist-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 5% 10%;
+}
+
+.tracklist {
+  min-height: 0;
+  overflow: scroll;
+}

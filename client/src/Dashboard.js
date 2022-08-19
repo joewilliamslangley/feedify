@@ -2,8 +2,7 @@ import React, { useState, useEffect, } from 'react'
 import useAuth from './useAuth'
 import SpotifyWebApi from 'spotify-web-api-node'
 import TrackList from './TrackList'
-import BrandBar from './BrandBar'
-import AudioPlayer from './AudioPlayer'
+import './Dashboard.css'
 
 const spotifyApi = new SpotifyWebApi({
   clientID: "0ab62b72024b4e79b14900920249deea"
@@ -117,10 +116,8 @@ export default function Dashboard({code}) {
   }, [followedAlbums])
 
   return (
-    <div className='app'>
-      <BrandBar />
+    <div className='dashboard'>
       <TrackList tracks={followedTracks} />
-      <AudioPlayer tracks={followedTracks}/>
     </div>
   )
 }

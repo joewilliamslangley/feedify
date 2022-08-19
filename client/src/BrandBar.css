@@ -1,0 +1,12 @@
+.brand-bar {
+  background-color: #333;
+}
+
+.navbar-brand {
+  color: white;
+  pointer-events: none;
+}
+
+.brand-bar > .container {
+  justify-content: center;
+}
