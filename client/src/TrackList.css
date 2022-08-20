@@ -9,4 +9,5 @@
 .tracklist {
   min-height: 0;
   overflow: scroll;
+  border: solid 2px rgba(0, 0, 0, 0.1);
 }
