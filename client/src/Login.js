@@ -1,4 +1,6 @@
 import React from "react"
+import Button from 'react-bootstrap/Button'
+import './Login.css'
 
 const params = new URLSearchParams({
   client_id: '0ab62b72024b4e79b14900920249deea',
@@ -11,8 +13,10 @@ const AUTH_URL = (`https://accounts.spotify.com/authorize?${params.toString()}`)
 
 export default function Login() {
   return (
-    <a href={AUTH_URL}>
-      Login With Spotify
-    </a>
+    <div className="login">
+      <Button variant="outline-primary" className="btn-blue" size="lg" href={AUTH_URL}>
+        Login With Spotify
+      </Button>
+    </div>
   )
 }
