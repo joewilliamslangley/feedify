@@ -5,6 +5,9 @@
 .navbar-brand {
   color: white;
   pointer-events: none;
+  font-weight: 700;
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 30px;
 }
 
 .brand-bar > .container {
