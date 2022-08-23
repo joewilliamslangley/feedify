@@ -18,9 +18,9 @@ export default function useAuth(code) {
 
         window.history.pushState({}, null, "/")
       })
-      // .catch(() => {
-      //   window.location = "/"
-      // })
+      .catch(err => {
+        console.log(err)
+      })
   }, [code])
 
   return accessToken
