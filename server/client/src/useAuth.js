@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react"
 import axios from "axios"
+import envUrls from "./urlSelector"
 
 export default function useAuth(code) {
   const [accessToken, setAccessToken] = useState()
-  const [refreshToken, setRefreshToken] = useState()
-  const [expiresIn, setExpiresIn] = useState()
+  const [, setRefreshToken] = useState()
+  const [, setExpiresIn] = useState()
 
   useEffect(() => {
     axios
-      .post("https://feedify-me.herokuapp.com/login", {
+      .post(`${envUrls.apiUrl}login`, {
         code,
       })
       .then(res => {

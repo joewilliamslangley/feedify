@@ -1,6 +1,13 @@
-const developmentUrl = "http:/localhost:3000/"
-const productionUrl = "https://feedify-me.herokuapp.com/"
+const development = {
+  apiUrl: "http://localhost:3001/",
+  redirectUrl: "http://localhost:3000/"
+}
 
-const apiUrl = process.env.NODE_ENV === "production" ? productionUrl : developmentUrl
+const production = {
+  apiUrl: "https://feedify-me.herokuapp.com/",
+  redirectUrl: "https://feedify-me.herokuapp.com/"
+}
 
-export default apiUrl
+const envUrls = process.env.NODE_ENV === "production" ? production : development
+
+export default envUrls
